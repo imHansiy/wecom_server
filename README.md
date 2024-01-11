@@ -1,2 +1,8 @@
-# cloudflare_worker
-cloudflare的worker服务
+```
+npm install
+npm run dev
+```
+
+```
+npm run deploy
+```

@@ -1,5 +1,6 @@
 import { Context } from "hono";
 import { env } from 'hono/adapter'
+import {myFetch} from "./index";
 /**
  * 获得token
  * @url /cgi-bin/gettoken
@@ -8,7 +9,7 @@ import { env } from 'hono/adapter'
  */
 export async function token(c: Context, corpid: string, corpsecret: string) {
     try {
-        const response = await fetch(`https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${corpid}&corpsecret=${corpsecret}`)
+        const response = await myFetch(`/cgi-bin/gettoken?corpid=${corpid}&corpsecret=${corpsecret}`)
         return c.json(await response.json())
     } catch (error) {
         // 处理错误，可以打印日志或返回适当的错误响应

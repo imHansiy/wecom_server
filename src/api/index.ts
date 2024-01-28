@@ -1,11 +1,10 @@
-import axios, {AxiosResponse} from "axios";
-import {RequestInfo} from "@cloudflare/workers-types/2021-11-03/index";
+// @ts-ignore
+import {RequestInit} from "node/globals";
+import {env} from "hono/adapter";
 
-const myAxios = axios.create({
-    baseURL: "https://qyapi.weixin.qq.com",
-    timeout: 5000,
-})
+const baseUrl = "https://qyapi.weixin.qq.com"
 
-
-
-export default myAxios;
+export function myFetch(input: string | URL | globalThis.Request,
+                        init?: RequestInit,){
+    return fetch(baseUrl+input,init)
+}

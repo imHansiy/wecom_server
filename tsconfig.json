@@ -1,17 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "outDir": "build",
+    "target": "es5",
+    "module": "commonjs",
+    "sourceMap": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "lib": [
-      "esnext"
-    ],
-    "types": [
-      "@cloudflare/workers-types"
-    ],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  },
+    "skipLibCheck": true
+  }
 }

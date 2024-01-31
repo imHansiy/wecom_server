@@ -1,7 +1,10 @@
 import {Context} from "hono";
 import {my_fetch} from "../config/my_fetch";
-import {decrypt, getSignature} from "../../utils/wecom_crypto";
+import {decrypt, getSignature} from "../utils/wecom_crypto";
 
+/** 企业微信验证回调
+ * @url /callback
+ * */
 export async function callback(c: Context) : Promise<Response> {
     const msg_signature = c.req.query("msg_signature")!
     const timestamp = c.req.query("timestamp")!
@@ -18,7 +21,7 @@ export async function callback(c: Context) : Promise<Response> {
 }
 
 /**
- * 获得token
+ * 获得应用token
  * @url /cgi-bin/gettoken
  */
 export async function getToken(c: Context) {

@@ -1,5 +1,5 @@
 import {Hono} from "hono";
-import {callback, getAccessToken} from "../controllers/auth";
+import {callbackMessage, callbackValidation} from "../controllers/auth";
 import {sendTextMessage} from "../controllers/message";
 
 export function routers(Hono: Hono) {
@@ -13,9 +13,15 @@ export function routers(Hono: Hono) {
             `)
         }
     })
+    Hono.notFound((c) => c.json({ message: '啊哦,没有这个页面', ok: false }, 404))
 
     Hono.all('/', (c) => c.text("企业微信应用开发框架"))
-    Hono.route('/callback').all(c => callback(c))
+
+    // 消息验证回调
+    Hono.get('/callback',c => callbackValidation(c))
+    // 接收消息
+    Hono.post('/callback', c => callbackMessage(c))
+
     // 发送文本消息
     Hono.post("/sendTextMessage", c => sendTextMessage(c))
 }

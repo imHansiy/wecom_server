@@ -1,6 +1,7 @@
 import {Context} from "hono";
 import {decrypt, getSignature} from "../utils/wecom_crypto";
 import {getAccessTokenApi} from "../api/auth";
+import {sendTextMessageApi} from "../api/message";
 
 /** 企业微信验证回调
  * @url /callback
@@ -13,6 +14,8 @@ export async function callback(c: Context) : Promise<Response> {
     const timestamp = c.req.query("timestamp")!
     const nonce = c.req.query("nonce")!
     const echostr = c.req.query("echostr")!
+
+    sendTextMessageApi("测试","1000002")
 
     const signStr = await getSignature(token, timestamp, nonce, echostr)
     if (signStr === msg_signature) {

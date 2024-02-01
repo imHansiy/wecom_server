@@ -4,7 +4,9 @@ import {Context} from "hono";
 import {sendTextMessageApi} from "../api/message";
 
 /** 发送文字消息
- * @url /cgi-bin/message/send
+ * @url /sendTextMessage
+ * @method POST
+ * @content-type application/json
  * @param {string} content 文字内容不能超过2048字节
  * @param {string} agentid 企业应用的id，整型。可在应用的设置页面查看
  * @param {string} touser 用户ID列表（消息接收者，多个接收者用‘|’分隔.默认所有人）
@@ -13,13 +15,14 @@ import {sendTextMessageApi} from "../api/message";
  * @param {string} safe 表示是否是保密消息，0表示否，1表示是，默认0
 * */
 export async function sendTextMessage(c:Context) {
-    // todo: 还木有从请求中获取参数
-    const content = c.req.param("content")
-    const agentid = c.req.query("agentid")
-    const touser = c.req.query("touser")
-    const toparty = c.req.query("toparty")
-    const totag = c.req.query("totag")
-    const safe = c.req.query("safe")
+    // 获取请求body的json
+    const body:any = await c.req.raw.json()
+    const content = body.content
+    const agentid = body.agentid
+    const touser = body.touser
+    const toparty = body.toparty
+    const totag = body.totag
+    const safe = body.safe
 
     console.log("content", content)
 

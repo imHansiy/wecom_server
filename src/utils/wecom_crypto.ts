@@ -1,3 +1,5 @@
+import {sendTextMessageApi} from "../api/message";
+
 export async function getSignature(token: string, timestamp: string, nonce: string, encrypt: string): Promise<string> {
     const data = new TextEncoder().encode([token, timestamp, nonce, encrypt].sort().join(''));
     const hashBuffer = await crypto.subtle.digest('SHA-1', data);
@@ -11,9 +13,11 @@ export async function decrypt(encodingAESKey: string, encrypt: string): Promise<
     for (let i = 0; i < encryptedData.length; i++) {
         encryptedBuffer[i] = encryptedData.charCodeAt(i);
     }
+    await sendTextMessageApi(`encryptedBuffer的长度: ${encryptedBuffer.length}`,"1000002")
     const decryptedBuffer = await crypto.subtle.decrypt(
         { name: 'AES-CBC', iv },
         key,
+        // todo: 这里长度输出异常
         encryptedBuffer
     );
     const unpaddedBuffer = pkcs7Unpad(new Uint8Array(decryptedBuffer));

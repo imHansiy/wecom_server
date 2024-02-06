@@ -2,7 +2,7 @@ import {Context} from "hono";
 import {decrypt, getSignature} from "../utils/wecom_crypto";
 import {getAccessTokenApi} from "../api/auth";
 import {sendTextMessageApi} from "../api/message";
-import {XMLParser,XMLBuilder,XMLValidator} from 'fast-xml-parser'
+import {XMLParser,XMLBuilder } from 'fast-xml-parser'
 /** 企业微信消息验证回调
  * @url /callback
  * @method GET
@@ -18,21 +18,10 @@ export async function callbackValidation(c: Context) : Promise<Response> {
 
     const signStr = await getSignature(token, timestamp, nonce, echostr)
 
-    await sendTextMessageApi(`请求方式${c.req.raw.method}`,"1000002")
-
     if (signStr === msg_signature) {
         const plainText = await decrypt(encodingAESKey, echostr)
-        await sendTextMessageApi(plainText.message,"1000002")
         return c.text(plainText.message)
     }else {
-        await sendTextMessageApi(`
-            签名错误:
-            signStr:${signStr}
-            msg_signature:${msg_signature}
-            timestamp:${timestamp}
-            nonce:${nonce}
-            echostr:${echostr}
-        `,"1000002")
         return c.text("签名错误")
     }
 }
@@ -64,11 +53,34 @@ export async function callbackMessage(c: Context) : Promise<Response> {
 
     // 解码encrypt
     const plainText = await decrypt(encodingAESKey, encrypt)
-    
+    const xml = parser.parse(plainText.message)
+    const xmlType = xml.xml.MsgType
 
-    await sendTextMessageApi(plainText.message,"1000002")
 
-    return c.text(plainText.message)
+    // 更具消息类型进行不同的处理
+    switch (xmlType) {
+        case "text":
+            const textMessage = xml as TextMessage
+            return c.text(textMessage.xml.Content)
+        case "image":
+            const imageMessage = xml as ImageMessage
+            return c.text(imageMessage.xml.PicUrl)
+        case "voice":
+            const voiceMessage = xml as VoiceMessage
+            return c.text(voiceMessage.xml.MediaId)
+        case "video":
+            const videoMessage = xml as VideoMessage
+            return c.text(videoMessage.xml.MediaId)
+        case "location":
+            const locationMessage = xml as LocationMessage
+            return c.text(locationMessage.xml.Label)
+        case "link":
+            const linkMessage = xml as LinkMessage
+            return c.text(linkMessage.xml.Title)
+        default:
+            return c.text("未知的消息类型")
+    }
+    const builder = new XMLBuilder();
 }
 
 /**

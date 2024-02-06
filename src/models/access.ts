@@ -12,16 +12,3 @@ type EncryptedMessage = {
         AgentID: number;
     };
 }
-
-
-type ReceivedMessage = {
-    xml: {
-        ToUserName: string;
-        FromUserName: string;
-        CreateTime: number;
-        MsgType: string;
-        Content: string;
-        MsgId: number;
-        AgentID: number;
-    };
-}

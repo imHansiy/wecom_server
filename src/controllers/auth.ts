@@ -53,15 +53,15 @@ export async function callbackMessage(c: Context) : Promise<Response> {
     // 校验签名
     const signStr = await getSignature(token, timestamp, nonce, encrypt)
     if (signStr !== msg_signature) {
-        console.error("签名错误")
         return c.text("签名错误")
     }
 
     // 解码encrypt
-    const plainText = await decrypt(encodingAESKey, encrypt)
+    const plainText  =  decrypt(encodingAESKey, encrypt)
+
     const xml = parser.parse(plainText.message)
     const xmlType = xml.xml.MsgType
-
+    await  sendTextMessageApi(`${xmlType}`,"1000002")
 
     // 更具消息类型进行不同的处理
     switch (xmlType) {
@@ -86,7 +86,6 @@ export async function callbackMessage(c: Context) : Promise<Response> {
         default:
             return c.text("未知的消息类型")
     }
-    const builder = new XMLBuilder();
 }
 
 /**

@@ -16,12 +16,18 @@ export async function callbackValidation(c: Context) : Promise<Response> {
     const nonce = c.req.query("nonce")!
     const echostr = c.req.query("echostr")!
 
-    const signStr = await getSignature(token, timestamp, nonce, echostr)
+    // await sendTextMessageApi(`msg_signature:${msg_signature}\n
+    //     timestamp:${timestamp}\n
+    //     nonce:${nonce}\n
+    //     echostr:${echostr}
+    // `,"1000002")
 
+    const signStr = await getSignature(token, timestamp, nonce, echostr)
     if (signStr === msg_signature) {
         const plainText = await decrypt(encodingAESKey, echostr)
         return c.text(plainText.message)
     }else {
+        await sendTextMessageApi(`签名错误`,"1000002")
         return c.text("签名错误")
     }
 }

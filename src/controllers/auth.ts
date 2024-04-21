@@ -1,13 +1,16 @@
 import {Context} from "hono";
-import {decrypt, getSignature} from "../utils/wecom_crypto";
+import {decrypt, encrypt, getAccessToken, getJsApiSignature, getJsapiTicket, getSignature} from "../utils/wecom_crypto";
 import {getAccessTokenApi} from "../api/auth";
 import {sendTextMessageApi} from "../api/message";
-import {XMLParser,XMLBuilder } from 'fast-xml-parser'
+import {XMLParser} from 'fast-xml-parser'
+import {getXMLObject} from "../models/proactive_messaging";
+import {createResponseXml, TextMessage} from "../models/passive_messages";
+
 /** 企业微信消息验证回调
  * @url /callback
  * @method GET
  * */
-export async function callbackValidation(c: Context) : Promise<Response> {
+export async function callbackValidation(c: Context): Promise<Response> {
     const token = "zvc9n1WcCL2p0A2jzFdzS"
     const encodingAESKey = "FMox2C8OsO0yfD8jzz6fRElAb6r6hm9BRJfUqxjnCUe"
 
@@ -16,18 +19,12 @@ export async function callbackValidation(c: Context) : Promise<Response> {
     const nonce = c.req.query("nonce")!
     const echostr = c.req.query("echostr")!
 
-    // await sendTextMessageApi(`msg_signature:${msg_signature}\n
-    //     timestamp:${timestamp}\n
-    //     nonce:${nonce}\n
-    //     echostr:${echostr}
-    // `,"1000002")
-
     const signStr = await getSignature(token, timestamp, nonce, echostr)
     if (signStr === msg_signature) {
-        const plainText = await decrypt(encodingAESKey, echostr)
+        const plainText = decrypt(encodingAESKey, echostr)
         return c.text(plainText.message)
-    }else {
-        await sendTextMessageApi(`签名错误`,"1000002")
+    } else {
+        await sendTextMessageApi(`签名错误`, "1000002")
         return c.text("签名错误")
     }
 }
@@ -36,9 +33,10 @@ export async function callbackValidation(c: Context) : Promise<Response> {
  * @url /callbackMessage
  * @method POST
  * */
-export async function callbackMessage(c: Context) : Promise<Response> {
+export async function callbackMessage(c: Context): Promise<Response> {
     const token = "zvc9n1WcCL2p0A2jzFdzS"
     const encodingAESKey = "FMox2C8OsO0yfD8jzz6fRElAb6r6hm9BRJfUqxjnCUe"
+    const corpid = "wwb330a036235c91ea"
 
     const msg_signature = c.req.query("msg_signature")!
     const timestamp = c.req.query("timestamp")!
@@ -46,54 +44,25 @@ export async function callbackMessage(c: Context) : Promise<Response> {
 
     const parser = new XMLParser();
     const obj = parser.parse(await c.req.raw.text()) as EncryptedMessage;
-    const encrypt = obj.xml.Encrypt
-    const toUserName = obj.xml.ToUserName
-    const agentId = obj.xml.AgentID
+    const Encrypt = obj.xml.Encrypt
+    // 获取发过来的应用ToUserName
+    const fromUserName = obj.xml.ToUserName
+    // 获取发过来的应用AgentID
+    const fromAgentID = obj.xml.AgentID
 
     // 校验签名
-    const signStr = await getSignature(token, timestamp, nonce, encrypt)
+    const signStr = await getSignature(token, timestamp, nonce, Encrypt)
     if (signStr !== msg_signature) {
         return c.text("签名错误")
     }
 
     // 解码encrypt
-    const plainText  =  decrypt(encodingAESKey, encrypt)
+    const plainText = decrypt(encodingAESKey, Encrypt)
 
-    const xml = parser.parse(plainText.message)
-    const xmlType = xml.xml.MsgType
-    await  sendTextMessageApi(`${xmlType}`,"1000002")
+    // await sendTextMessageApi(`收到消息: ${plainText.message}`,"1000002")
+    const xml = getXMLObject(plainText.message)
+    const xmlType = xml!.MsgType
+    await sendTextMessageApi(`收到消息类型: ${xmlType}`,"1000002")
 
-    // 更具消息类型进行不同的处理
-    switch (xmlType) {
-        case "text":
-            const textMessage = xml as TextMessage
-            return c.text(textMessage.xml.Content)
-        case "image":
-            const imageMessage = xml as ImageMessage
-            return c.text(imageMessage.xml.PicUrl)
-        case "voice":
-            const voiceMessage = xml as VoiceMessage
-            return c.text(voiceMessage.xml.MediaId)
-        case "video":
-            const videoMessage = xml as VideoMessage
-            return c.text(videoMessage.xml.MediaId)
-        case "location":
-            const locationMessage = xml as LocationMessage
-            return c.text(locationMessage.xml.Label)
-        case "link":
-            const linkMessage = xml as LinkMessage
-            return c.text(linkMessage.xml.Title)
-        default:
-            return c.text("未知的消息类型")
-    }
-}
-
-/**
- * 获得应用token
- * @url /cgi-bin/gettoken
- */
-export async function getAccessToken() {
-    const corpid = "wwb330a036235c91ea"
-    const corpsecret = "bpKk0puHo__K2WM2C4SDxZFRDOfxgFJnvW_vQy6HmhA"
-    return getAccessTokenApi(corpid, corpsecret)
+    return c.text("")
 }

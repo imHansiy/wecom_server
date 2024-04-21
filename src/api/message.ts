@@ -1,5 +1,15 @@
 import {myFetch} from "../config/my_fetch";
-import {getAccessToken} from "../controllers/auth";
+import {getAccessTokenApi} from "./auth";
+
+/**
+ * 获得应用token
+ * @url /cgi-bin/gettoken
+ */
+async function getAccessToken() {
+    const corpid = "wwb330a036235c91ea"
+    const corpsecret = "bpKk0puHo__K2WM2C4SDxZFRDOfxgFJnvW_vQy6HmhA"
+    return getAccessTokenApi(corpid, corpsecret)
+}
 
 /** 发送文字消息
  * @url /cgi-bin/message/send

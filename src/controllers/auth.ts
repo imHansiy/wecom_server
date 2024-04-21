@@ -1,10 +1,8 @@
 import {Context} from "hono";
-import {decrypt, encrypt, getAccessToken, getJsApiSignature, getJsapiTicket, getSignature} from "../utils/wecom_crypto";
-import {getAccessTokenApi} from "../api/auth";
+import {decrypt,  getSignature} from "edgewecomcrypto";
 import {sendTextMessageApi} from "../api/message";
 import {XMLParser} from 'fast-xml-parser'
 import {getXMLObject} from "../models/proactive_messaging";
-import {createResponseXml, TextMessage} from "../models/passive_messages";
 
 /** 企业微信消息验证回调
  * @url /callback

@@ -1,0 +1,130 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "WecomApi",
+    "description": "使用Hono.js成功对接企业微信API并且扩展功能"
+  },
+  "schemes": [
+    "https"
+  ],
+  "host": "8787-idx-wecomserver-1722648762129.cluster-7ubberrabzh4qqy2g4z7wgxuw2.cloudworkstations.dev",
+  "basePath": "/",
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "首页接口",
+        "description": "返回欢迎信息",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/callback": {
+      "get": {
+        "summary": "消息验证回调",
+        "description": "用于企业微信的消息验证",
+        "responses": {
+          "200": {
+            "description": "验证成功"
+          }
+        }
+      },
+      "post": {
+        "summary": "接收消息",
+        "description": "接收来自企业微信的消息",
+        "responses": {
+          "200": {
+            "description": "成功接收消息"
+          }
+        }
+      }
+    },
+    "/sendTextMessage": {
+      "post": {
+        "summary": "发送文本消息",
+        "description": "向企业微信发送文本消息",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "发送文本消息",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "文字内容（不超过2048字节）"
+                },
+                "agentid": {
+                  "type": "string",
+                  "description": "企业应用的id"
+                },
+                "touser": {
+                  "type": "string",
+                  "description": "用户ID列表（消息接收者，多个接收者用‘|’分隔，默认@all）"
+                },
+                "toparty": {
+                  "type": "string",
+                  "description": "部门ID列表，多个接收者用‘|’分隔。当touser为@all时忽略本参数"
+                },
+                "totag": {
+                  "type": "string",
+                  "description": "标签ID列表，多个接收者用‘|’分隔。当touser为@all时忽略本参数"
+                },
+                "safe": {
+                  "type": "string",
+                  "description": "表示是否是保密消息，0表示否，1表示是，默认0"
+                }
+              },
+              "required": [
+                "content",
+                "agentid"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "消息发送成功"
+          },
+          "400": {
+            "description": "缺少参数"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "输入Bearer {token}来进行认证"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

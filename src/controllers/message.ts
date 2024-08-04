@@ -1,5 +1,3 @@
-import {myFetch} from "../config/my_fetch";
-import {getAccessToken} from "./auth";
 import {Context} from "hono";
 import {sendTextMessageApi} from "../api/message";
 

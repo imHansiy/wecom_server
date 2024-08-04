@@ -5,13 +5,14 @@ import {sendTextMessage} from "../controllers/message";
 export function routers(Hono: Hono) {
     // 全局中间件
     Hono.use('*', async (c, next) => {
-        await next()
+        c.res.headers.set('Access-Control-Allow-Origin', '*')
         if (c.error){
             c.html(`
             <h1>错误</h1>
             <p>${c.error.message}</p>
             `)
         }
+        await next()
     })
     Hono.notFound((c) => c.json({ message: '啊哦,没有这个页面', ok: false }, 404))
 

@@ -1,6 +1,7 @@
 import {Hono} from "hono";
 import {callbackMessage, callbackValidation} from "../controllers/auth";
 import {sendTextMessage} from "../controllers/message";
+import { test } from "../test";
 
 export function routers(Hono: Hono) {
     // 全局中间件
@@ -25,4 +26,7 @@ export function routers(Hono: Hono) {
 
     // 发送文本消息
     Hono.post("/sendTextMessage", c => sendTextMessage(c))
+
+    // 接口测试
+    Hono.get("/test", c => test(c))
 }

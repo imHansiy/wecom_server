@@ -99,6 +99,20 @@
           }
         }
       }
+    },
+    "/test":{
+      "get": {
+        "summary": "测试接口",
+        "description": "返回测试详细",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

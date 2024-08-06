@@ -42,3 +42,5 @@ export async function sendTextMessageApi(content: string, agentid: string, touse
     })
     return response.json()
 }
+
+// 被动回复消息

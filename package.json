@@ -6,7 +6,9 @@
   "dependencies": {
     "edgewecomcrypto": "^1.0.0",
     "fast-xml-parser": "^4.3.4",
-    "hono": "^3.11.8"
+    "hono": "^3.11.8",
+    "mysql2": "^3.11.0",
+    "serverless-mysql": "^1.5.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231218.0",

@@ -27,5 +27,6 @@
   "editor.rename.enablePreview": false,
   "redhat.telemetry.enabled": false,
   "swaggerViewer.showOnlyFileName": true,
-  "workbench.editor.enablePreviewFromQuickOpen": true //防止在侧边打开新标签页
+  "workbench.editor.enablePreviewFromQuickOpen": true, //防止在侧边打开新标签页,
+  "swaggerViewer.previewInBrowser": true,
 }

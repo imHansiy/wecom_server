@@ -3,6 +3,7 @@ import {decrypt,  getSignature} from "edgewecomcrypto";
 import {sendTextMessageApi} from "../api/message";
 import {XMLParser} from 'fast-xml-parser'
 import {getXMLObject} from "../models/proactive_messaging";
+import { TextMessage, createResponseXml } from "../models/passive_messages";
 
 /** 企业微信消息验证回调
  * @url /callback
@@ -61,6 +62,7 @@ export async function callbackMessage(c: Context): Promise<Response> {
     const xml = getXMLObject(plainText.message)
     const xmlType = xml!.MsgType
     await sendTextMessageApi(`收到消息类型: ${xmlType}`,"1000002")
-
+    const responseText = TextMessage()
+    const responseMsg = createResponseXml(responseText,)
     return c.text("")
 }

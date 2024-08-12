@@ -43,8 +43,21 @@ export const customConfigLoader: ConfigFactory = (): Record<string, any> => {
   const jsonFilePath = `config.${process.env.NODE_ENV || 'development'}.json`;
   if (fs.existsSync(jsonFilePath)) {
     const jsonFileContent = fs.readFileSync(jsonFilePath, 'utf-8');
-    const parsed = JSON.parse(jsonFileContent);
-    mergeDeep(config, parsed);
+
+    // 检查文件内容是否为空
+    if (jsonFileContent.trim()) {
+      try {
+        const parsed = JSON.parse(jsonFileContent);
+        mergeDeep(config, parsed);
+      } catch (error) {
+        console.error('Failed to parse JSON configuration file:', error);
+        throw error; // 重新抛出错误以确保问题能够被适当处理
+      }
+    } else {
+      console.warn(`Configuration file ${jsonFilePath} is empty. Skipping JSON parsing.`);
+    }
+  } else {
+    console.warn(`Configuration file ${jsonFilePath} does not exist. Skipping JSON parsing.`);
   }
   return config;
 };

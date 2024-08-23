@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Header, Inject, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { decrypt } from '@wecom/crypto';
+import { decrypt, encrypt, getSignature } from '@wecom/crypto';
 import * as crypto from 'crypto';
 import { xml2js } from 'xml-js';
 import { WecomService } from './wecom.service';
@@ -24,28 +24,23 @@ export class WecomController {
         const encodingAESKey = this.configService.get<string>("wecom.encodingAESKey")
         return this.wecomService.validateUrl(query, token, encodingAESKey);
     }
-    GetSignature(token: string, sTimeStamp: string, sNonce: string, encrypt: string): string {
-        const stringSort = [token, sTimeStamp, sNonce, encrypt].sort().join('');
-        const sha1String = crypto.createHash('sha1');
-        sha1String.update(stringSort);
-        return sha1String.digest('hex');
-    }
-
 
     @Post()
-    @Header('Content-Type', 'application/xml')
+    // @Header('Content-Type', 'application/xml')
     @ApiOperation({ summary: '接收消息' })
-    async callbackMessage(@Body() body: ReceiveMessage): Promise<string> {
-        console.log(body.xml);
-
+    async callbackMessage(@Body() body: ReceiveMessage, @Query() query: CallbackVerificationParams): Promise<string> {
         const encodingAESKey = this.configService.get<string>("wecom.encodingAESKey")
         const plainText = decrypt(encodingAESKey, body.xml.Encrypt).message
         const parsedMessage = xml2js(plainText, { compact: true }) as PlaintextMessage
-        
+        const nonce = query.nonce.toString()
+        const timestamp = query.timestamp.toString()
+
         const messageType = parsedMessage.xml.MsgType._cdata
         let msg_encrypt: string
         switch (messageType) {
             case "text":
+                const signStr = getSignature(this.configService.get<string>("wecom.token"), timestamp, nonce, body.xml.Encrypt);
+                console.log(signStr);
                 msg_encrypt = this.wecomService.handleTextMsg(parsedMessage as PlaintextTextMessage, parsedMessage.xml.FromUserName._cdata, parsedMessage.xml.ToUserName._cdata)
                 break;
             case "image":
@@ -70,9 +65,12 @@ export class WecomController {
         }
         // return res
         const token = this.configService.get<string>("wecom.token")
-        const timestamp = Math.floor(Date.now() / 1000).toString()
-        const nonce = Math.floor(Math.random() * 10000000000).toString()
-        const msgSignature = this.GetSignature(token, timestamp, nonce, msg_encrypt)
+        // const msgSignature = getSignature(token, timestamp, nonce, msg_encrypt)
+        const msgSignature = query.msg_signature
+
+        // console.log(query.msg_signature);
+        // console.log(msgSignature);
+
         const res = create()
             .ele('xml')
             .ele('Encrypt').dat(msg_encrypt).up()
@@ -81,8 +79,18 @@ export class WecomController {
             .ele('Nonce').dat(nonce).up()
             .end({ headless: true, prettyPrint: true });
 
+        // const res = `<xml>
+        // <Encrypt><![CDATA[${msg_encrypt}]]></Encrypt>
+        // <MsgSignature><![CDATA[${msgSignature}]]></MsgSignature>
+        // <TimeStamp>${timestamp}</TimeStamp>
+        // <Nonce><![CDATA[${nonce}]]></Nonce>
+        // </xml>`
+        // console.log(res);
+        // console.log(query);
         // console.log(res);
 
-        return res;
+
+
+        return res
     }
 }

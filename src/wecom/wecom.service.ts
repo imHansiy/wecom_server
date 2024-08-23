@@ -50,10 +50,10 @@ export class WecomService {
     // 处理文本消息
     handleTextMsg(msg: PlaintextTextMessage, toUserName: string, fromUserName: string): string {
         // 生成随机id
-        console.log(msg.xml.Content._cdata);
+        // console.log(msg.xml.Content._cdata);
 
         const randomId = Math.floor(Math.random() * 10000000000).toString();
-        const replyMsg = new WecomReplyTextMessage("测试消息", toUserName, fromUserName).toXml()
+        const replyMsg = new WecomReplyTextMessage(msg.xml.Content._cdata, toUserName, fromUserName).toXml()
         const encryptMsg = encrypt(this.configService.get<string>("wecom.encodingAESKey"), replyMsg, randomId)
         return encryptMsg
     }

@@ -23,6 +23,8 @@ export class WecomInterceptor implements NestInterceptor {
     //     const parsedBody = await parseStringPromise(xml, { explicitArray: false });
     //     request.body = parsedBody;
     //   } catch (err) {
+    //     console.log(err);
+
     //     throw new HttpException('XML解析失败', HttpStatus.BAD_REQUEST);
     //   }
     // }

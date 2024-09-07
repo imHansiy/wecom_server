@@ -3,9 +3,10 @@
         "enable": true,
         "baseUrl": "https://qyapi.weixin.qq.com",
         "token": "vc9n1WcCL2p0A2jzFdzS",
-        "encodingAESKey": "FMox2C8OsO0yfD8jzz6fRElAb6r6hm9BRJfUqxjnCUe",
+        "encodingAESKey": "Nm162BqWuLqr2klC9laFfuiWzlCVxXPYc9rTzBCJ2mV",
         "corpid": "wwb330a036235c91ea",
-        "corpsecret": "d7VpIdwHW8vycxmZgziU6-aPPjjDfzIL-ipj1RRgiho"
+        "corpsecret": "d7VpIdwHW8vycxmZgziU6-aPPjjDfzIL-ipj1RRgiho",
+        "agentid": "1000005"
     },
     "proxy": {
         "enable": false,

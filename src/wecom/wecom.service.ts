@@ -5,13 +5,14 @@ import { decrypt, encrypt, getSignature } from '@wecom/crypto';
 import { firstValueFrom } from 'rxjs';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { WecomReplyTextMessage } from './dto/reply_message';
+import { WecomMessage } from './wecom.message';
 
 @Injectable()
 export class WecomService {
     constructor(
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
+        private readonly wecomMessage: WecomMessage,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) { }
 
@@ -48,14 +49,11 @@ export class WecomService {
     }
 
     // 处理文本消息
-    handleTextMsg(msg: PlaintextTextMessage, toUserName: string, fromUserName: string): string {
-        // 生成随机id
-        // console.log(msg.xml.Content._cdata);
-
-        const randomId = Math.floor(Math.random() * 10000000000).toString();
-        const replyMsg = new WecomReplyTextMessage(msg.xml.Content._cdata, toUserName, fromUserName).toXml()
-        const encryptMsg = encrypt(this.configService.get<string>("wecom.encodingAESKey"), replyMsg, randomId)
-        return encryptMsg
+    async handleTextMsg(msg: PlaintextTextMessage, toUserName: string, fromUserName: string): Promise<string> {
+        let count = 1000;
+        let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
+        await this.wecomMessage.sendTextMsg(str,toUserName);
+        return "文本消息"
     }
 
     // 处理图片消息

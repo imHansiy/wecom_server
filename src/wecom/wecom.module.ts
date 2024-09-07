@@ -1,19 +1,22 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { WecomController } from './wecom.controller';
 import { WecomService } from './wecom.service';
 import { WecomInterceptor } from './interceptors/wecom.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CacheModule } from '@nestjs/cache-manager';
 import { HttpModule } from '@nestjs/axios';
+import { WecomMessage } from './wecom.message';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    HttpModule
+    HttpModule,
+    forwardRef(() => WecomModule)
   ],
   controllers: [WecomController],
-  providers: [WecomService, {
+  providers: [WecomService, WecomMessage, {
     provide: APP_INTERCEPTOR,
     useClass: WecomInterceptor,
-  }]
+  }],
+  exports: [WecomService, WecomMessage],
 })
 export class WecomModule { }

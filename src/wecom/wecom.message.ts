@@ -95,7 +95,9 @@ export class WecomMessage {
 
     async sendImageMsg(): Promise<void> {
         await this.init();
-        await this.wecomMedia.uploadMedia('image', "https://jsdelivr.007666.xyz/gh/1802024110/GitHub_Oss@main/img/24-9-19/image_bac5510dc8c69f210f90acbb3b6c3877.png", true)
+        // const { data } = await this.wecomMedia.uploadMedia("https://jsdelivr.007666.xyz/gh/1802024110/GitHub_Oss@main/img/24-9-19/image_bac5510dc8c69f210f90acbb3b6c3877.png")
+        const { data } = await this.wecomMedia.uploadMedia("./src/wecom/aa.docx")
+        console.log(data);
 
         // const payload: SendMsgImagePayload = {
         //     "touser": touser,

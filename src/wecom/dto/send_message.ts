@@ -84,8 +84,8 @@ type SendMsgTextPayload = {
 // 图片消息类型
 type SendMsgImagePayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'image';
     agentid: number;
     image: {
@@ -99,8 +99,8 @@ type SendMsgImagePayload = {
 // 语音消息类型
 type SendMsgVoicePayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'voice';
     agentid: number;
     voice: {
@@ -113,8 +113,8 @@ type SendMsgVoicePayload = {
 // 视频消息类型
 type SendMsgVideoPayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'video';
     agentid: number;
     video: {
@@ -130,8 +130,8 @@ type SendMsgVideoPayload = {
 // 文件消息类型
 type SendMsgFilePayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'file';
     agentid: number;
     file: {
@@ -145,8 +145,8 @@ type SendMsgFilePayload = {
 // 文本卡片消息类型
 type SendMsgTextCardPayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'textcard';
     agentid: number;
     textcard: {
@@ -163,8 +163,8 @@ type SendMsgTextCardPayload = {
 // 图文消息类型
 type SendMsgNewsPayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'news';
     agentid: number;
     news: {
@@ -185,8 +185,8 @@ type SendMsgNewsPayload = {
 // 图文消息（mpnews）类型
 type SendMsgMpNewsPayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'mpnews';
     agentid: number;
     mpnews: {
@@ -208,8 +208,8 @@ type SendMsgMpNewsPayload = {
 // Markdown消息类型
 type SendMsgMarkdownPayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'markdown';
     agentid: number;
     markdown: {
@@ -222,8 +222,8 @@ type SendMsgMarkdownPayload = {
 // 小程序通知消息类型
 type SendMsgMiniProgramNoticePayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'miniprogram_notice';
     miniprogram_notice: {
         appid: string;
@@ -244,8 +244,8 @@ type SendMsgMiniProgramNoticePayload = {
 // 模板卡片消息类型
 type SendMsgTemplateCardPayload = {
     touser: string;
-    toparty: string;
-    totag: string;
+    toparty?: string;
+    totag?: string;
     msgtype: 'template_card';
     agentid: number;
     template_card: {

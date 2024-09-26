@@ -2,6 +2,7 @@ import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { WecomService } from "./wecom.service";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
+import { WecomMedia } from "./wecom.media";
 
 @Injectable()
 export class WecomMessage {
@@ -12,7 +13,7 @@ export class WecomMessage {
         private readonly wecomServer: WecomService,
         private readonly configServer: ConfigService,
         private readonly httpService: HttpService,
-
+        private readonly wecomMedia: WecomMedia
     ) {
         this.agentid = this.configServer.get<string>("wecom.agentid")
     }
@@ -41,7 +42,6 @@ export class WecomMessage {
 
     async sendTextMsg(msg: string, touser = "@all"): Promise<void> {
         await this.init();
-
         const byteLimit = 2048;
         const msgTotalLength = this.getByteLength(msg);
         const totalSlices = Math.ceil(msgTotalLength / (byteLimit - 10)); // 留出大约10字节用于分片标识 "(X/Y)"
@@ -91,5 +91,21 @@ export class WecomMessage {
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
         }
+    }
+
+    async sendImageMsg(): Promise<void> {
+        await this.init();
+        await this.wecomMedia.uploadMedia('image', "https://jsdelivr.007666.xyz/gh/1802024110/GitHub_Oss@main/img/24-9-19/image_bac5510dc8c69f210f90acbb3b6c3877.png", true)
+
+        // const payload: SendMsgImagePayload = {
+        //     "touser": touser,
+        //     "msgtype": "image",
+        //     "agentid": this.agentid,
+        //     "image": {
+        //         "media_id": "MEDIA_ID"
+        //     }
+        // };
+
+        // const res = await this.httpService.post(this.url, payload).toPromise();
     }
 }

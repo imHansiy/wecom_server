@@ -6,6 +6,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 import { WecomMessage } from './wecom.message';
 import { ConfigModule } from '@nestjs/config';
+import { WecomMedia } from './wecom.media';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { ConfigModule } from '@nestjs/config';
     forwardRef(() => WecomModule)
   ],
   controllers: [WecomController],
-  providers: [WecomService, WecomMessage, {
+  providers: [WecomService, WecomMessage, WecomMedia,{
     provide: APP_INTERCEPTOR,
     useClass: WecomInterceptor,
   }],

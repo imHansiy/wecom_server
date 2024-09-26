@@ -50,9 +50,10 @@ export class WecomService {
 
     // 处理文本消息
     async handleTextMsg(msg: PlaintextTextMessage, toUserName: string, fromUserName: string): Promise<string> {
-        let count = 1000;
-        let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
-        await this.wecomMessage.sendTextMsg(str,toUserName);
+        // let count = 1000;
+        // let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
+        // await this.wecomMessage.sendTextMsg(str,toUserName);
+        await this.wecomMessage.sendImageMsg()
         return "文本消息"
     }
 

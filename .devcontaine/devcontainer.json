@@ -1,0 +1,13 @@
+{
+    "name": "Node.js Dev Container",
+    "dockerComposeFile": "docker-compose.yaml",
+    "service": "node",
+    "workspaceFolder": "/workspace",
+    "extensions": [],
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "editor.formatOnSave": true
+    },
+    "postCreateCommand": "npm install",
+    "remoteUser": "node"
+}

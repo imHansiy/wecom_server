@@ -1,0 +1,12 @@
+services:
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace:cached
+      - /workspace/node_modules
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 3000:3000

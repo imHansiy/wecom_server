@@ -14,7 +14,7 @@ import { WecomMedia } from './wecom.media';
     forwardRef(() => WecomModule)
   ],
   controllers: [WecomController],
-  providers: [WecomService, WecomMessage, WecomMedia,{
+  providers: [WecomService, WecomMessage, WecomMedia, {
     provide: APP_INTERCEPTOR,
     useClass: WecomInterceptor,
   }],

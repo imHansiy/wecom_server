@@ -12,11 +12,11 @@
   # Sets environment variables in the workspace
   env = {
     DateBaseType = "mysql";
+    NPM_CONFIG_PREFIX = "";
   };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
-      "Dart-Code.dart-code"
       "zhuangtongfa.material-theme"
       "LaurentTreguier.vscode-simple-icons"
       "AMiner.codegeex"
@@ -30,13 +30,10 @@
     # Workspace lifecycle hooks
     workspace = {
       # Runs when a workspace is first created
-      onCreate = {
-        # Example: install JS dependencies from NPM
-        npm-install = "npm install";
-      };
+      onCreate = { };
       # Runs when the workspace is (re)started
       onStart = {
-        run-dev = "cd /home/user/wecom_server && npm run start:dev";
+        run-dev = "bash .idx/setup.sh";
         # Example: start a background task to watch and re-build backend code
         # watch-backend = "npm run watch-backend";
       };

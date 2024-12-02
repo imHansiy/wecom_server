@@ -40,7 +40,7 @@ export class WecomMessage {
         return str.slice(0, i);
     }
 
-    async sendTextMsg(msg: string, touser = "@all"): Promise<void> {
+    async sendTextMsg(touser: string = "@all", msg: string): Promise<void> {
         await this.init();
         const byteLimit = 2048;
         const msgTotalLength = this.getByteLength(msg);
@@ -53,7 +53,7 @@ export class WecomMessage {
                 "msgtype": "text",
                 "agentid": this.agentid,
                 "text": {
-                    "content": `${msgPart}${sliceSuffix}`
+                    "content": `${msgPart}${totalSlices === 1 ? "" : sliceSuffix}`
                 }
             };
 
@@ -93,21 +93,53 @@ export class WecomMessage {
         }
     }
 
-    async sendImageMsg(): Promise<void> {
+    async sendImageMsg(toUserName: string = "@all", img?: string): Promise<boolean> {
         await this.init();
-        // const { data } = await this.wecomMedia.uploadMedia("https://jsdelivr.007666.xyz/gh/1802024110/GitHub_Oss@main/img/24-9-19/image_bac5510dc8c69f210f90acbb3b6c3877.png")
-        const { data } = await this.wecomMedia.uploadMedia("./src/wecom/aa.docx")
-        console.log(data);
+        let media_id = null;
+        if (img) {
+            const { data } = await this.wecomMedia.uploadMedia(img)
+            console.log(data);
+            if (data.errmsg != "ok") return false
+            media_id = data.media_id
+        }
 
-        // const payload: SendMsgImagePayload = {
-        //     "touser": touser,
-        //     "msgtype": "image",
-        //     "agentid": this.agentid,
-        //     "image": {
-        //         "media_id": "MEDIA_ID"
-        //     }
-        // };
+        const payload: SendMsgImagePayload = {
+            "touser": toUserName,
+            "msgtype": "image",
+            "agentid": this.agentid,
+            "image": {
+                "media_id": media_id
+            }
+        };
 
-        // const res = await this.httpService.post(this.url, payload).toPromise();
+        const res = await this.httpService.post(this.url, payload).toPromise();
+        console.log(res.data);
+        return false
     }
+
+    async sendVoiceMsg(toUserName: string = "@all", voice?: string): Promise<boolean> {
+        await this.init();
+        let media_id = null;
+        if (voice) {
+            const { data } = await this.wecomMedia.uploadMedia(voice)
+            console.log(data);
+            if (data.errmsg != "ok") return false
+            media_id = data.media_id
+        }
+
+        const payload: SendMsgVoicePayload = {
+            "touser": toUserName,
+            "msgtype": "voice",
+            "agentid": this.agentid,
+            "voice": {
+                "media_id": media_id
+            }
+        };
+
+        const res = await this.httpService.post(this.url, payload).toPromise();
+        console.log(res.data);
+        return false
+    }
+
+    // async sendVideoMsg()
 }

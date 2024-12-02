@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { WecomMessage } from './wecom.message';
+import { convertToAmr } from 'src/utils/media_convert';
 
 @Injectable()
 export class WecomService {
@@ -49,20 +50,25 @@ export class WecomService {
     }
 
     // 处理文本消息
-    async handleTextMsg(msg: PlaintextTextMessage, toUserName: string, fromUserName: string): Promise<string> {
-        // let count = 1000;
-        // let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
-        // await this.wecomMessage.sendTextMsg(str,toUserName);
-        await this.wecomMessage.sendImageMsg()
-        return "文本消息"
+    async handleTextMsg(msg: PlaintextTextMessage, toUserName: string, fromUserName: string): Promise<boolean> {
+        let count = 1000;
+        let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
+        await this.wecomMessage.sendTextMsg(toUserName, str);
+        return true
     }
 
     // 处理图片消息
-    handleImageMsg(msg: PlaintextImageMessage): string {
+    async handleImageMsg(msg: PlaintextImageMessage): Promise<string> {
+        // await this.wecomMessage.sendImageMsg(toUserName, "https://jsdelivr.007666.xyz/gh/1802024110/GitHub_Oss@main/img/24-9-18/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240918102405_332cd3c5c87384f76e3af972fbf1d6ad.jpg")
+        console.log("图片消息");
+
         return msg.xml.PicUrl._cdata
     }
     // 处理语言消息
     handleVoiceMsg(msg: PlaintextVoiceMessage): string {
+        // todo: 未正常发送语音消息
+        // convertToAmr("./src/test.mp3")
+        // await this.wecomMessage.sendVoiceMsg(toUserName, "./src/test.mp3")
         return msg.xml.MediaId._text
     }
     // 处理视频消息

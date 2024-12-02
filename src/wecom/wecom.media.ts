@@ -7,28 +7,8 @@ import { createWriteStream, createReadStream, existsSync, unlink, statSync } fro
 import { basename } from "path";
 import * as mime from "mime-types";
 import * as FormData from "form-data";
-
-/**
- * 上传结果接口
- */
-interface UploadResult {
-  success: boolean;
-  error?: string;
-  data?: any;
-}
-
-/**
- * 媒体类型配置接口
- */
-interface MediaTypeConfig {
-  maxSize: number;
-  allowedExtensions: string[];
-}
-
-/**
- * 企业微信支持的媒体类型
- */
-type MediaType = 'image' | 'voice' | 'video' | 'file';
+import { Readable } from "stream";
+import { detectStreamType, getStreamSize } from "src/utils/file";
 
 /**
  * WecomMedia 类用于处理企业微信媒体文件的上传
@@ -130,8 +110,13 @@ export class WecomMedia {
    * @param filePath 文件路径
    * @returns 媒体类型
    */
-  private detectMediaType(filePath: string): MediaType {
-    const ext = extname(filePath).toLowerCase();
+  private async detectMediaType(filePath: string | Readable): Promise<MediaType> {
+    let ext: string
+    if (filePath instanceof Readable) {
+      ext = (await detectStreamType(filePath))
+    } else {
+      ext = extname(filePath).toLowerCase();
+    }
     for (const [type, config] of Object.entries(this.mediaTypeConfigs)) {
       if (config.allowedExtensions.includes(ext)) {
         return type as MediaType;
@@ -146,10 +131,18 @@ export class WecomMedia {
    * @param type 媒体类型
    * @returns 错误信息，如果文件有效则返回 null
    */
-  private validateFile(filePath: string, type: MediaType): string | null {
+  private async validateFile(filePath: string | Readable, type: MediaType): Promise<string | null> {
     const config = this.mediaTypeConfigs[type];
-    const fileExt = extname(filePath).toLowerCase();
-    const fileSize = statSync(filePath).size;
+    let fileExt: string
+    let fileSize: number
+    if (filePath instanceof Readable) {
+      fileExt = (await detectStreamType(filePath))
+      fileSize = await getStreamSize(filePath)
+    }
+    else {
+      fileExt = extname(filePath).toLowerCase();
+      fileSize = statSync(filePath).size;
+    }
 
     if (config.allowedExtensions.length > 0 && !config.allowedExtensions.includes(fileExt)) {
       return `不支持的文件格式: ${fileExt}. 此类型支持的格式: ${config.allowedExtensions.join(', ')}`;
@@ -169,12 +162,12 @@ export class WecomMedia {
    * @param filePath 文件路径（本地路径或 URL）
    * @returns 上传结果
    */
-  async uploadMedia(filePath: string): Promise<UploadResult> {
+  async uploadMedia(filePath: string | Readable): Promise<UploadResult> {
     try {
       const { localFilePath, filename } = await this.prepareFile(filePath);
-      this.type = this.detectMediaType(localFilePath);
+      this.type = await this.detectMediaType(localFilePath);
 
-      const validationError = this.validateFile(localFilePath, this.type);
+      const validationError = await this.validateFile(localFilePath, this.type);
       if (validationError) {
         return { success: false, error: validationError };
       }
@@ -190,12 +183,20 @@ export class WecomMedia {
     }
   }
 
+
+
   /**
    * 准备上传文件
    * @param filePath 文件路径（本地路径或 URL）
    * @returns 本地文件路径和文件名
    */
-  private async prepareFile(filePath: string): Promise<{ localFilePath: string; filename: string }> {
+  private async prepareFile(filePath: string | Readable): Promise<{ localFilePath: string | Readable; filename: string }> {
+    if (filePath instanceof Readable) {
+      const ext = await detectStreamType(filePath)
+      // 随机生成文件名
+      const randomFileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${ext}`;
+      return { localFilePath: filePath, filename: randomFileName }
+    }
     if (this.isNetworkResource(filePath)) {
       const downloadedFile = await this.downloadFile(filePath);
       return { localFilePath: downloadedFile.path, filename: downloadedFile.filename };
@@ -214,8 +215,16 @@ export class WecomMedia {
    * @param filename 文件名
    * @returns 表单数据
    */
-  private createFormData(filePath: string, filename: string): FormData {
+  private createFormData(filePath: string | Readable, filename: string): FormData {
     const formData = new FormData();
+    if (filePath instanceof Readable) {
+      formData.append('media', filePath, {
+        filename: filename,
+        contentType: mime.lookup(filename) || 'application/octet-stream'
+      });
+      return formData;
+    }
+
     formData.append('media', createReadStream(filePath), {
       filename: filename,
       contentType: mime.lookup(filename) || 'application/octet-stream'

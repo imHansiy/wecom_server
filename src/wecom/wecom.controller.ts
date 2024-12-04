@@ -27,7 +27,7 @@ export class WecomController {
     @Post()
     @ApiOperation({ summary: '接收消息' })
     async callbackMessage(@Body() body: ReceiveMessage, @Query() query: CallbackVerificationParams): Promise<string> {
-  
+
         const encodingAESKey = this.configService.get<string>("wecom.encodingAESKey")
         const plainText = decrypt(encodingAESKey, body.xml.Encrypt).message
         const parsedMessage = xml2js(plainText, { compact: true }) as PlaintextMessage
@@ -39,19 +39,19 @@ export class WecomController {
                 this.wecomService.handleTextMsg(parsedMessage as PlaintextTextMessage, parsedMessage.xml.FromUserName._cdata, parsedMessage.xml.ToUserName._cdata)
                 break;
             case "image":
-                this.wecomService.handleImageMsg(parsedMessage as PlaintextImageMessage)
+                this.wecomService.handleImageMsg(parsedMessage as PlaintextImageMessage, parsedMessage.xml.FromUserName._cdata, parsedMessage.xml.ToUserName._cdata)
                 break;
             case "voice":
-                this.wecomService.handleVoiceMsg(parsedMessage as PlaintextVoiceMessage)
+                this.wecomService.handleVoiceMsg(parsedMessage as PlaintextVoiceMessage, parsedMessage.xml.FromUserName._cdata, parsedMessage.xml.ToUserName._cdata)
                 break;
             case "video":
-                this.wecomService.handleVideoMsg(parsedMessage as PlaintextVideoMessage)
+                this.wecomService.handleVideoMsg(parsedMessage as PlaintextVideoMessage, parsedMessage.xml.FromUserName._cdata, parsedMessage.xml.ToUserName._cdata)
                 break;
             case "location":
-                this.wecomService.handleLocationMsg(parsedMessage as PlaintextLocationMessage)
+                this.wecomService.handleLocationMsg(parsedMessage as PlaintextLocationMessage, parsedMessage.xml.FromUserName._cdata, parsedMessage.xml.ToUserName._cdata)
                 break;
             case "link":
-                this.wecomService.handleLinkMsg(parsedMessage as PlaintextLinkMessage)
+                this.wecomService.handleLinkMsg(parsedMessage as PlaintextLinkMessage, parsedMessage.xml.FromUserName._cdata, parsedMessage.xml.ToUserName._cdata)
                 break;
             case "event":
                 break;

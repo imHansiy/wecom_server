@@ -58,29 +58,30 @@ export class WecomService {
     }
 
     // 处理图片消息
-    async handleImageMsg(msg: PlaintextImageMessage): Promise<string> {
+    async handleImageMsg(msg: PlaintextImageMessage, toUserName: string, fromUserName: string): Promise<string> {
         // await this.wecomMessage.sendImageMsg(toUserName, "https://jsdelivr.007666.xyz/gh/1802024110/GitHub_Oss@main/img/24-9-18/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240918102405_332cd3c5c87384f76e3af972fbf1d6ad.jpg")
         console.log("图片消息");
 
         return msg.xml.PicUrl._cdata
     }
     // 处理语言消息
-    handleVoiceMsg(msg: PlaintextVoiceMessage): string {
+    handleVoiceMsg(msg: PlaintextVoiceMessage, toUserName: string, fromUserName: string): string {
         // todo: 未正常发送语音消息
         // convertToAmr("./src/test.mp3")
         // await this.wecomMessage.sendVoiceMsg(toUserName, "./src/test.mp3")
         return msg.xml.MediaId._text
     }
     // 处理视频消息
-    handleVideoMsg(msg: PlaintextVideoMessage): string {
+    async handleVideoMsg(msg: PlaintextVideoMessage, toUserName: string, fromUserName: string): Promise<string> {
+        await this.wecomMessage.sendVideoMsg(toUserName, "http://vjs.zencdn.net/v/oceans.mp4")
         return msg.xml.MediaId._text
     }
     // 处理位置消息
-    handleLocationMsg(msg: PlaintextLocationMessage): string {
+    handleLocationMsg(msg: PlaintextLocationMessage, toUserName: string, fromUserName: string): string {
         return msg.xml.Location_X._text + " " + msg.xml.Location_Y._text
     }
     // 处理链接消息
-    handleLinkMsg(msg: PlaintextLinkMessage): string {
+    handleLinkMsg(msg: PlaintextLinkMessage, toUserName: string, fromUserName: string): string {
         return msg.xml.Url._cdata
     }
 }

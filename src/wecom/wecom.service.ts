@@ -73,7 +73,7 @@ export class WecomService {
     }
     // 处理视频消息
     async handleVideoMsg(msg: PlaintextVideoMessage, toUserName: string, fromUserName: string): Promise<string> {
-        await this.wecomMessage.sendVideoMsg(toUserName, "http://vjs.zencdn.net/v/oceans.mp4")
+        await this.wecomMessage.sendVideoMsg(toUserName, "/home/user/wecom_server/src/wdwadwdwd.mp4")
         return msg.xml.MediaId._text
     }
     // 处理位置消息

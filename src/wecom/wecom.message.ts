@@ -111,13 +111,13 @@ export class WecomMessage {
      */
     private async uploadMedia(filePath: string): Promise<_SendMsgResult> {
         try {
-            const { data } = await this.wecomMedia.uploadMedia(filePath);
+            const { data, success, error } = await this.wecomMedia.uploadMedia(filePath);
 
-            if (data.errmsg !== "ok" || !data.media_id) {
+            if (!success) {
                 return {
                     success: false,
                     error: {
-                        message: `上传失败: ${data.errmsg}`,
+                        message: `上传失败: ${error}`,
                         details: data,
                         phase: 'upload'
                     }
@@ -201,7 +201,7 @@ export class WecomMessage {
      * @param touser 接收人，默认@all
      * @param mediaPath 媒体文件路径
      */
-    private async sendMediaMsg<playloadType>(
+    private async sendMediaMsg(
         type: 'image' | 'voice' | 'video',
         touser: string = "@all",
         mediaPath?: string
@@ -220,6 +220,7 @@ export class WecomMessage {
             }
 
             const uploadResult = await this.uploadMedia(mediaPath);
+
             if (!uploadResult.success) return uploadResult;
 
             const payload = {

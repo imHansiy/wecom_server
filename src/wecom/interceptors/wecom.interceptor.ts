@@ -14,21 +14,7 @@ export class WecomInterceptor implements NestInterceptor {
     if (!wecomEnabled) {
       throw new HttpException('未启用wecom', HttpStatus.FORBIDDEN);
     }
-
     const request = context.switchToHttp().getRequest<Request>();
-
-    // if (request.method === 'POST' && request.is('xml')) {
-    //   try {
-    //     const xml = request.body;
-    //     const parsedBody = await parseStringPromise(xml, { explicitArray: false });
-    //     request.body = parsedBody;
-    //   } catch (err) {
-    //     console.log(err);
-
-    //     throw new HttpException('XML解析失败', HttpStatus.BAD_REQUEST);
-    //   }
-    // }
-
     return next.handle();
   }
 }

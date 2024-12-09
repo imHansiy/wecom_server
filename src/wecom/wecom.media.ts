@@ -55,8 +55,25 @@ export class WecomMedia {
    */
   private async downloadFile(fileUrl: string): Promise<{ path: string; filename: string }> {
     const response = await this.httpService.get(fileUrl, { responseType: 'stream' }).toPromise();
-    const filename = this.getFilenameFromResponse(response);
+
+    // 获取文件名和扩展名
+    let filename = this.getFilenameFromResponse(response);
+
+    // 如果没有扩展名，尝试从 Content-Type 获取扩展名
+    if (!extname(filename)) {
+      const contentType = response.headers['content-type'];
+
+      if (contentType) {
+        const ext = contentType.split('/')[1];
+        if (ext) {
+          filename += "." + ext;
+        }
+      }
+    }
+
+    // 确保文件路径带上扩展名
     const tempFilePath = join(__dirname, filename);
+
     const writer = createWriteStream(tempFilePath);
 
     return new Promise((resolve, reject) => {
@@ -168,10 +185,10 @@ export class WecomMedia {
       this.type = await this.detectMediaType(localFilePath);
 
       const validationError = await this.validateFile(localFilePath, this.type);
+
       if (validationError) {
         return { success: false, error: validationError };
       }
-
       await this.initUploadUrl();
       const formData = this.createFormData(localFilePath, filename);
       const response = await this.sendUploadRequest(formData);
@@ -199,6 +216,7 @@ export class WecomMedia {
     }
     if (this.isNetworkResource(filePath)) {
       const downloadedFile = await this.downloadFile(filePath);
+
       return { localFilePath: downloadedFile.path, filename: downloadedFile.filename };
     } else {
       const localFilePath = this.getLocalFilePath(filePath);

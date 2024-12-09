@@ -27,7 +27,6 @@ export class WecomController {
     @Post()
     @ApiOperation({ summary: '接收消息' })
     async callbackMessage(@Body() body: ReceiveMessage, @Query() query: CallbackVerificationParams): Promise<string> {
-
         const encodingAESKey = this.configService.get<string>("wecom.encodingAESKey")
         const plainText = decrypt(encodingAESKey, body.xml.Encrypt).message
         const parsedMessage = xml2js(plainText, { compact: true }) as PlaintextMessage

@@ -51,9 +51,11 @@ export class WecomService {
 
     // 处理文本消息
     async handleTextMsg(msg: PlaintextTextMessage, toUserName: string, fromUserName: string): Promise<boolean> {
-        let count = 1000;
-        let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
-        await this.wecomMessage.sendTextMsg(toUserName, str);
+        await this.wecomMessage.sendFileMsg(toUserName, "/home/user/wecom_server/src/wdwadwdwd.mp4")
+
+        // let count = 1000;
+        // let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
+        // await this.wecomMessage.sendTextMsg(toUserName, str);
         return true
     }
 

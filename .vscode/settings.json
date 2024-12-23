@@ -9,7 +9,7 @@
   "editor.bracketPairColorization.enabled": true,
   "files.encoding": "utf8",
   "Codegeex.Privacy": false,
-  "Codegeex.EnableExtension": false,
+  "Codegeex.EnableExtension": true,
   "Codegeex.CompletionModel": "CodeGeeX Pro[Beta]",
   "Codegeex.Chat.LanguagePreference": "中文",
   "Codegeex.Comment.LanguagePreference": "English",

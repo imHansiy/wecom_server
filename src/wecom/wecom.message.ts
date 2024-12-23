@@ -202,7 +202,7 @@ export class WecomMessage {
      * @param mediaPath 媒体文件路径
      */
     private async sendMediaMsg(
-        type: 'image' | 'voice' | 'video',
+        type: 'image' | 'voice' | 'video' | 'file',
         touser: string = "@all",
         mediaPath?: string
     ): Promise<_SendMsgResult> {
@@ -267,5 +267,9 @@ export class WecomMessage {
      */
     async sendVideoMsg(touser: string = "@all", video?: string): Promise<_SendMsgResult> {
         return this.sendMediaMsg('video', touser, video);
+    }
+
+    async sendFileMsg(touser: string = "@all", file?: string): Promise<_SendMsgResult> {
+        return this.sendMediaMsg('file', touser, file);
     }
 }

@@ -80,7 +80,12 @@ export class WecomService {
         return msg.xml.MediaId._text
     }
     // 处理位置消息
-    handleLocationMsg(msg: PlaintextLocationMessage, toUserName: string, fromUserName: string): string {
+    async handleLocationMsg(msg: PlaintextLocationMessage, toUserName: string, fromUserName: string): Promise<string> {
+        const messsg = `
+        您的位置X是：${msg.xml.Location_X._text},
+        您的位置Y是：${msg.xml.Location_Y._text},
+        `
+        const a = await this.wecomMessage.sendTextMsg(toUserName, messsg);
         return msg.xml.Location_X._text + " " + msg.xml.Location_Y._text
     }
     // 处理链接消息

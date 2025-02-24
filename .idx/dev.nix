@@ -19,8 +19,6 @@
     extensions = [
       "zhuangtongfa.material-theme"
       "LaurentTreguier.vscode-simple-icons"
-      "AMiner.codegeex"
-      "formulahendry.code-runner"
     ];
 
     # Enable previews

@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 require('body-parser-xml')(bodyParser);
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['log', 'error', 'warn', 'debug', 'verbose']
+  });
   const config = new DocumentBuilder()
     .setTitle('艾家')
     .setDescription('项目API')

@@ -1,13 +1,11 @@
-import { Body, Controller, Get, Header, Inject, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Header, Inject, Logger, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { decrypt, encrypt, getSignature } from '@wecom/crypto';
-import * as crypto from 'crypto';
 import { xml2js } from 'xml-js';
 import { WecomService } from './wecom.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { create } from 'xmlbuilder2';
 @ApiTags('企业微信-服务器回调校验')
 @Controller('wecom')
 export class WecomController {
@@ -19,6 +17,7 @@ export class WecomController {
     @Get()
     @ApiOperation({ summary: '微信服务器验证接口' })
     callbackValidation(@Query() query: CallbackVerificationParams): string {
+        console.log("触发了")
         const token = this.configService.get<string>("wecom.token")
         const encodingAESKey = this.configService.get<string>("wecom.encodingAESKey")
         return this.wecomService.validateUrl(query, token, encodingAESKey);

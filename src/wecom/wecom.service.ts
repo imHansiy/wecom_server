@@ -55,7 +55,8 @@ export class WecomService {
 
         // let count = 1000;
         // let str = Array.from({ length: count }, (v, i) => `测试${i + 1}`).join('');
-        await this.wecomMessage.sendTextMsg(toUserName, "成功");
+        const a = await this.wecomMessage.sendTextMsg(toUserName, "成功");
+        console.log(a)
         return true
     }
 

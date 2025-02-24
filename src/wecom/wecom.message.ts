@@ -186,6 +186,7 @@ export class WecomMessage {
 
             return { success: true, messageIds };
         } catch (error) {
+            console.log(error)
             return {
                 success: false,
                 error: {
